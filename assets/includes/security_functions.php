@@ -35,7 +35,7 @@ function insert_csrf_token() {
 
     generate_csrf_token();
 
-    echo '<input type="hidden" name="token" value="' . $_SESSION['token'] . '" />';
+    echo '<input form="contactForm" type="hidden" name="token" value="' . $_SESSION['token'] . '" />';
 }
 
 function verify_csrf_token() {

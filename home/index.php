@@ -1,9 +1,14 @@
 <?php
 
 define('TITLE', "Home");
+
+include '../form/FormGenerator.php';
 include '../assets/layouts/header.php';
 check_verified();
 
+$json_file_path = '../form/form.json';
+$formData = new FormGenerator($json_file_path, 'admin');
+$form = $formData->generateForm();
 ?>
 
 
@@ -26,48 +31,116 @@ check_verified();
             </div>
 
             <div class="my-3 p-3 bg-white rounded box-shadow">
-                <h6 class="mb-0">Dummy Text</h6>
-                <sub class="text-muted border-bottom border-gray pb-2 mb-0">[use for your application purpose]</sub>
-
-                <div class="media text-muted pt-3">
-                    <img data-src="holder.js/32x32?theme=thumb&bg=007bff&fg=007bff&size=1" alt="" class="mr-2 rounded">
-                    <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                        <strong class="d-block text-gray-dark">@somethingsomething</strong>
-                        Some dummy text. This is originally meant to be completely replaced with your application's own functionality.<br>
-                        Or maybe use this for other functionality, although that is not recommended.
-                    </p>
-                </div>
-                <div class="media text-muted pt-3">
-                    <img data-src="holder.js/32x32?theme=thumb&bg=007bff&fg=007bff&size=1" alt="" class="mr-2 rounded">
-                    <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                        <strong class="d-block text-gray-dark">@somethingsomething</strong>
-                        Some dummy text. This is originally meant to be completely replaced with your application's own functionality.<br>
-                        Or maybe use this for other functionality, although that is not recommended.
-                    </p>
-                </div>
-                <div class="media text-muted pt-3">
-                    <img data-src="holder.js/32x32?theme=thumb&bg=007bff&fg=007bff&size=1" alt="" class="mr-2 rounded">
-                    <p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                        <strong class="d-block text-gray-dark">@somethingsomething</strong>
-                        Some dummy text. This is originally meant to be completely replaced with your application's own functionality.<br>
-                        Or maybe use this for other functionality, although that is not recommended.
-                    </p>
-                </div>
-                
-                <small class="d-block text-right mt-3">
-                    <a href="#">All updates</a>
-                </small>
+                <h6 class="mb-0">Form Generator</h6>
+                <sub class="text-muted border-bottom border-gray pb-2 mb-0">[Following form is generated dynamically!]</sub> 
             </div>
+
+
+        <div class="row">
+
+        <div class="col-sm-12 px-5">
+
+            <div class="text-center mb-3">
+                    <div style="display:none;"  class="alert alert-success text-success font-weight-bold" id="responseMessageSuccess">
+                        
+                    </div>
+                    <div style="display:none;" class="alert alert-danger text-danger font-weight-bold " id="responseMessageFail">
+                        
+                    </div>
+            </div>
+
+            <?= $form; ?>
+
+
+        </div>
+    </div>
+
 
         </div>
     </div>
 </main>
 
 
+<script>
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent default form submission
+    
+    document.getElementById( 'responseMessageSuccess' ).style.display = 'none';
+    document.getElementById( 'responseMessageFail' ).style.display = 'none';
 
 
-    <?php
+    // Perform client-side validations
+    if (!validateForm()) {
+      return;
+    }
+    
+    // Collect form data
+    var formData = new FormData(this);
 
-    include '../assets/layouts/footer.php'
+    // Append submit input value to the FormData object
+    var submitInput = document.getElementById('submit');
+    formData.append(submitInput.name, submitInput.value);
 
-    ?>
+
+    // Send form data via AJAX
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '../contact/includes/contact.inc.php', true);
+    xhr.onload = function() {
+        let response = JSON.parse(xhr.response);
+        
+        if (response.status === 'success') {
+            document.getElementById( 'responseMessageSuccess' ).style.display = 'block';
+            document.getElementById('responseMessageSuccess').innerHTML = response.message;
+        } else {
+            document.getElementById( 'responseMessageFail' ).style.display = 'block';
+            document.getElementById('responseMessageFail').innerHTML = response.message;
+        }
+    };
+    xhr.send(formData);
+  });
+
+  function validateForm() {
+  var nameInput = document.getElementById('name');
+  var emailInput = document.getElementById('email');
+  var subjectInput = document.getElementById('subject');
+  var messageInput = document.getElementById('message');
+
+  // Validate name field
+  if (nameInput.value.trim() === '') {
+    alert('Please enter your name');
+    nameInput.focus();
+    return false;
+  }
+  // Validate name field
+  if (subjectInput.value.trim() === '') {
+    alert('Please enter subject');
+    subjectInput.focus();
+    return false;
+  }
+
+  // Validate name field
+  if (messageInput.value.trim() === '') {
+    alert('Please enter message');
+    messageInput.focus();
+    return false;
+  }
+
+
+  // Validate email field
+  var email = emailInput.value.trim();
+  var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (email === '') {
+    alert('Please enter your email');
+    emailInput.focus();
+    return false;
+  } else if (!emailRegex.test(email)) {
+    alert('Please enter a valid email address');
+    emailInput.focus();
+    return false;
+  }
+
+  // All validations passed, the form is valid
+  return true;
+}
+
+</script>

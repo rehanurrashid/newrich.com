@@ -113,13 +113,15 @@ else {
                     session_start();
 
                     
-                    if($row['verified_at'] != NULL){
+                    // if($row['verified_at'] != NULL){
 
                         $_SESSION['auth'] = 'verified';
-                    } else{
+                    // }
+                    
+                    // else{
 
-                        $_SESSION['auth'] = 'loggedin';
-                    }
+                    //     $_SESSION['auth'] = 'loggedin';
+                    // }
 
                     $_SESSION['id'] = $row['id'];
                     $_SESSION['username'] = $row['username'];

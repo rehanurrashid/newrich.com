@@ -12,7 +12,7 @@ require '../../assets/vendor/PHPMailer/src/Exception.php';
 require '../../assets/vendor/PHPMailer/src/PHPMailer.php';
 require '../../assets/vendor/PHPMailer/src/SMTP.php';
 
-if (isset($_POST['contact-submit'])) {
+if (isset($_POST['submit'])) {
 
     /*
     * -------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ if (isset($_POST['contact-submit'])) {
 
         $_POST[$key] = _cleaninjections(trim($value));
     }
-
+    
     /*
     * -------------------------------------------------------------------------------
     *   Verifying CSRF token
@@ -34,11 +34,11 @@ if (isset($_POST['contact-submit'])) {
     if (!verify_csrf_token()){
 
         $_SESSION['STATUS']['mailstatus'] = 'Request could not be validated';
-        header("Location: ../");
+        echo json_encode(array('status' => 'fail', 'message' => 'Request could not be validated'));
         exit();
     }
 
-
+    
     	// Check if the referer is a local server.
 	if (!isset($_SERVER['HTTP_REFERER']) || (parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST) != $_SERVER['SERVER_NAME'])) {
 	exit('Direct access not permitted');
@@ -59,6 +59,8 @@ if (isset($_POST['contact-submit'])) {
 		$name = $_POST['name'];
 		$email = $_POST['email'];
 	}
+
+    
 	//To filter message variable
 	function input_filter($data) {
 		$data = trim($data);
@@ -74,29 +76,8 @@ if (isset($_POST['contact-submit'])) {
 		$_SESSION['ERRORS']['mailstatus'] = 'Fields cannot be empty';
 		exit();
 	}
-
-	//check if the message is longer than 20 characters.
-	elseif(strlen($msg) <= 20){
-	
-		$_SESSION['ERRORS']['mailstatus'] = 'Message should be longer than 20 characters';
-		header("Location: ../");
-		exit();
-	}
-
-	//check if the message is shorter than 500 characters.
-	elseif(strlen($msg) >= 500){
-	
-		$_SESSION['ERRORS']['mailstatus'] = 'Message should be shorter than 500 characters';
-		header("Location: ../");
-		exit();
-	}
-
     
-
-    // $message = "<strong>Name:</strong> $name<br>" 
-    //     . "<strong>Email:</strong> <i>$email</i><br><br>"
-    //     . "<strong>Message:</strong><br><br>$msg";
-
+	
     /*
     * -------------------------------------------------------------------------------
     *   Using email template
@@ -121,6 +102,7 @@ if (isset($_POST['contact-submit'])) {
 
     $mail = new PHPMailer(true);
 
+    
     try {
 
         $mail->isSMTP();
@@ -143,17 +125,18 @@ if (isset($_POST['contact-submit'])) {
     catch (Exception $e) {
 
         // for public use
-        $_SESSION['STATUS']['mailstatus'] = 'message could not be sent, try again later';
+        $_SESSION['STATUS']['mailstatus'] = 'Message could not be sent, try again later';
 
         // for development use
         // $_SESSION['STATUS']['mailstatus'] = 'message could not be sent. ERROR: ' . $mail->ErrorInfo;
 
-        header("Location: ../");
+        echo json_encode(array('status' => 'fail', 'message' => 'Message could not be sent, try again later'));
+        
         exit();
     }
 
     $_SESSION['STATUS']['mailstatus'] = 'Thanks for contacting! Please Allow 24 hrs for a response';
-    header("Location: ../");
+    echo json_encode(array('status' => 'success', 'message' => 'Thanks for contacting! Please Allow 24 hrs for a response'));
     exit();
 }
 else {

@@ -1,12 +1,13 @@
 <?php
 
-if (!defined('APP_NAME'))                       define('APP_NAME', 'Login System');
-if (!defined('APP_ORGANIZATION'))               define('APP_ORGANIZATION', 'KLiK');
-if (!defined('APP_OWNER'))                      define('APP_OWNER', 'msaad1999');
-if (!defined('APP_DESCRIPTION'))                define('APP_DESCRIPTION', 'Embeddable PHP Login System');
+if (!defined('APP_NAME'))                       define('APP_NAME', 'Form Generator');
+if (!defined('APP_ORGANIZATION'))               define('APP_ORGANIZATION', 'newrich');
+if (!defined('APP_OWNER'))                      define('APP_OWNER', 'Rehan Ur Rashid');
+if (!defined('APP_DESCRIPTION'))                define('APP_DESCRIPTION', 'Test for newrich.com');
 
-if (!defined('ALLOWED_INACTIVITY_TIME'))        define('ALLOWED_INACTIVITY_TIME', time()+1*60);
+if (!defined('ALLOWED_INACTIVITY_TIME'))        define('ALLOWED_INACTIVITY_TIME', time()+5*60);
 
+if (!defined('JSON_FORM_FILE_PATH'))            define('JSON_FORM_FILE_PATH', __FILE__);
 if (!defined('DB_DATABASE'))                    define('DB_DATABASE', 'klik_loginsystem');
 if (!defined('DB_HOST'))                        define('DB_HOST','127.0.0.1');
 if (!defined('DB_USERNAME'))                    define('DB_USERNAME','root');
